@@ -1,3 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나BTI 테스트</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+  }
+</style>
+</head>
+<body>
 <!-- ============================================================
   나BTI 테스트 - 티스토리 HTML 모드에 통째로 붙여넣으세요
   ============================================================ -->
@@ -1028,3 +1043,31 @@
   renderStart();
 })();
 </script>
+
+<script>
+  function sendHeightToParent() {
+    var contentHeight = Math.max(
+      document.documentElement.scrollHeight,
+      document.body.scrollHeight,
+      document.documentElement.offsetHeight,
+      document.body.offsetHeight,
+      600
+    );
+    window.parent.postMessage({ type: 'resizeNabtiIframe', height: contentHeight }, '*');
+  }
+
+  window.addEventListener('load', sendHeightToParent);
+  window.addEventListener('resize', sendHeightToParent);
+
+  if (window.ResizeObserver) {
+    var nabtiObserver = new ResizeObserver(function() {
+      sendHeightToParent();
+    });
+    nabtiObserver.observe(document.body);
+  }
+
+  setTimeout(sendHeightToParent, 300);
+  setTimeout(sendHeightToParent, 1000);
+</script>
+</body>
+</html>
