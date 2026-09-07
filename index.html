@@ -698,6 +698,12 @@
     state = { step: 0, answers: [], nickname: "" };
   }
 
+  // 캐릭터 이미지가 webp라서 아이폰 카카오톡에서 미리보기 이미지가 안 뜨는 문제 방지용:
+  // wsrv.nl 이미지 프록시를 거쳐 jpg로 즉시 변환한 주소를 만들어준다. (원본 이미지 파일은 그대로 둬도 됨)
+  function toKakaoSafeImage(url) {
+    return "https://wsrv.nl/?url=" + encodeURIComponent(url) + "&output=jpg&w=800";
+  }
+
   function shareToKakao({ title, description, imageUrl }) {
     if (!window.Kakao || !Kakao.isInitialized()) {
       const fallbackText = `${title}\n${description}\n\n너도 테스트 해봐 👉 ${shareLinkUrl}`;
@@ -710,7 +716,7 @@
       content: {
         title: title,
         description: description,
-        imageUrl: imageUrl,
+        imageUrl: toKakaoSafeImage(imageUrl),
         link: { mobileWebUrl: shareLinkUrl, webUrl: shareLinkUrl }
       },
       buttons: [
