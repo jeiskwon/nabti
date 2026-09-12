@@ -450,6 +450,14 @@
   }
 
   .nabti-hidden { display: none !important; }
+
+  .nabti-shared-tag {
+    text-align: center;
+    font-size: 13px;
+    color: #b598c9;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
 </style>
 
 <script>
@@ -713,15 +721,64 @@
     state = { step: 0, answers: [], nickname: "" };
   }
 
+  // 닉네임 등 사용자 입력값을 화면에 그대로 꽂아 넣기 전에 이스케이프 처리 (XSS 방지)
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  // 결과(scores, 예민함 점수, 닉네임)를 URL 파라미터에 담아 "결과가 곧바로 보이는" 공유 링크를 만든다.
+  // E/S/T/J 는 0~3 중 하나이며, I/N/F/P 는 (3 - 값)으로 복원 가능해서 4개 숫자만 저장하면 충분하다.
+  function buildResultUrl(scores, sensitivity, nickname) {
+    const params = new URLSearchParams();
+    params.set("e", scores.E);
+    params.set("s", scores.S);
+    params.set("t", scores.T);
+    params.set("j", scores.J);
+    params.set("sen", sensitivity);
+    params.set("n", nickname);
+    return shareLinkUrl + "?" + params.toString();
+  }
+
+  // 페이지 로드시 URL에 공유 파라미터가 있으면 그 값으로 결과 데이터를 복원한다. 없으면 null.
+  function parseSharedResult() {
+    const params = new URLSearchParams(window.location.search);
+    if (!["e", "s", "t", "j", "sen"].every(k => params.has(k))) return null;
+
+    const e = parseInt(params.get("e"), 10);
+    const s = parseInt(params.get("s"), 10);
+    const t = parseInt(params.get("t"), 10);
+    const j = parseInt(params.get("j"), 10);
+    const sen = parseInt(params.get("sen"), 10);
+
+    if ([e, s, t, j].some(v => isNaN(v) || v < 0 || v > 3)) return null;
+    if (isNaN(sen) || sen < 4 || sen > 16) return null;
+
+    const nickname = escapeHtml((params.get("n") || "친구").slice(0, 10));
+
+    return {
+      scores: { E: e, I: 3 - e, S: s, N: 3 - s, T: t, F: 3 - t, J: j, P: 3 - j },
+      sensitivity: sen,
+      nickname: nickname
+    };
+  }
+
   // 캐릭터 이미지가 webp라서 아이폰 카카오톡에서 미리보기 이미지가 안 뜨는 문제 방지용:
   // wsrv.nl 이미지 프록시를 거쳐 jpg로 즉시 변환한 주소를 만들어준다. (원본 이미지 파일은 그대로 둬도 됨)
   function toKakaoSafeImage(url) {
     return "https://wsrv.nl/?url=" + encodeURIComponent(url) + "&output=jpg&w=800";
   }
 
-  function shareToKakao({ title, description, imageUrl }) {
+  function shareToKakao({ title, description, imageUrl, link }) {
+    // link(결과 URL)가 있으면 카톡 카드 자체를 누를 때 "내 결과 화면"으로 바로 연결되고,
+    // 카드 하단 "나도 테스트 해보기" 버튼은 항상 시작화면(shareLinkUrl)으로 연결된다.
+    const targetLink = link || shareLinkUrl;
     if (!window.Kakao || !Kakao.isInitialized()) {
-      const fallbackText = `${title}\n${description}\n\n너도 테스트 해봐 👉 ${shareLinkUrl}`;
+      const fallbackText = `${title}\n${description}\n\n결과 보고 너도 테스트 해봐 👉 ${targetLink}`;
       navigator.clipboard?.writeText(fallbackText);
       alert("카카오 공유 기능을 불러오지 못했어요.\n대신 문구가 복사됐으니 카카오톡에 붙여넣어주세요.");
       return;
@@ -732,7 +789,7 @@
         title: title,
         description: description,
         imageUrl: toKakaoSafeImage(imageUrl),
-        link: { mobileWebUrl: shareLinkUrl, webUrl: shareLinkUrl }
+        link: { mobileWebUrl: targetLink, webUrl: targetLink }
       },
       buttons: [
         {
@@ -764,7 +821,7 @@
         nicknameInput.style.borderColor = "#ff8fab";
         return;
       }
-      const savedNickname = nickname;
+      const savedNickname = escapeHtml(nickname);
       resetState();
       state.nickname = savedNickname;
       renderQuestion();
@@ -881,8 +938,11 @@
     return all;
   }
 
-  function renderResult() {
-    const { scores, sensitivity } = calcScores();
+  function renderResult(sharedData) {
+    // sharedData가 있으면(=공유 링크로 들어온 방문자) 그 값을 그대로 쓰고,
+    // 없으면(=방금 테스트를 마친 본인) 지금까지의 답변으로 새로 계산한다.
+    const isShared = !!sharedData;
+    const { scores, sensitivity } = sharedData || calcScores();
     const type = calcType(scores);
     const result = RESULTS[type];
     const charUrl = IMG.characters[type];
@@ -1008,6 +1068,12 @@
           </div>
         </div>
 
+        ${isShared ? `
+        <div class="nabti-shared-tag">👀 ${state.nickname}님이 공유한 결과예요</div>
+        <button class="nabti-btn nabti-btn-full" id="nabti-retry-btn">
+          <img src="${IMG.playButton}" alt="" /> 나도 테스트 해보기
+        </button>
+        ` : `
         <button class="nabti-btn nabti-btn-full" id="nabti-retry-btn">
           <img src="${IMG.refreshIcon}" alt="" /> 다시하기
         </button>
@@ -1016,6 +1082,7 @@
             <img src="${IMG.shareIcon}" alt="" /> 결과 공유하기
           </button>
         </div>
+        `}
       </div>
     `;
 
@@ -1028,19 +1095,34 @@
 
     document.getElementById("nabti-retry-btn").onclick = () => {
       resetState();
+      // 공유 링크의 ?e=..&s=..&n=.. 같은 파라미터를 지워서, 새로고침해도 다시 남의 결과가 뜨지 않게 한다.
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
       renderStart();
     };
 
-    document.getElementById("nabti-share-btn").onclick = () => {
-      shareToKakao({
-        title: `${state.nickname}님은 ${result.animal}상이시네요! (${type})`,
-        description: `${result.blurb} 궁합 좋은 유형은 [${compatType}] ${compatResult.animal}예요!`,
-        imageUrl: charUrl
-      });
-    };
+    const shareBtn = document.getElementById("nabti-share-btn");
+    if (shareBtn) {
+      shareBtn.onclick = () => {
+        const resultUrl = buildResultUrl(scores, sensitivity, state.nickname);
+        shareToKakao({
+          title: `${state.nickname}님은 ${result.animal}상이시네요! (${type})`,
+          description: `${result.blurb} 궁합 좋은 유형은 [${compatType}] ${compatResult.animal}예요!`,
+          imageUrl: charUrl,
+          link: resultUrl
+        });
+      };
+    }
   }
 
-  renderStart();
+  const sharedResult = parseSharedResult();
+  if (sharedResult) {
+    state.nickname = sharedResult.nickname;
+    renderResult(sharedResult);
+  } else {
+    renderStart();
+  }
 })();
 </script>
 
