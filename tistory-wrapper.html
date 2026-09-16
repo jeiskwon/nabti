@@ -17,111 +17,53 @@
   const BASE='https://jeiskwon.github.io/nabti/index.html';
   const MIN_HEIGHT=700;
   const MAX_HEIGHT=14000;
-  let lastHeight=0;
-  let timer=null;
-  let ro=null;
-  let mo=null;
+  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');
+  let lastHeight=0,timer=null,ro=null,mo=null;
 
-  function appUrl(){
-    return BASE+(window.location.search||'');
-  }
-
+  function appUrl(){return BASE+(window.location.search||'');}
   function playzipHtml(){
-    return `
-      <div id="playzip-result-only" style="margin-top:18px;padding:17px 15px;border:1px solid #e7ddf3;border-radius:18px;background:linear-gradient(145deg,#fff,#faf6ff);text-align:center;box-shadow:0 8px 20px rgba(110,80,145,.07);">
-        <div style="font-size:17px;font-weight:800;color:#4a3f4f;margin-bottom:5px;">다른 것도 해볼까요?</div>
-        <div style="font-size:12.5px;line-height:1.6;color:#8a7d8f;margin-bottom:12px;">사주 · 타로 · 나BTI를 PLAYZIP에서 골라 즐겨보세요.</div>
-        <a href="https://tech-asset.tistory.com/pages/PLAYZIP" target="_top" style="display:block;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-size:14px;font-weight:800;margin-bottom:8px;">PLAYZIP에서 다른 콘텐츠 보기 →</a>
-        <a href="https://tech-asset.tistory.com/pages/PLAYZIP#install" target="_top" style="display:block;text-decoration:none;border:1px solid #ddd2f1;background:#fff;color:#675591;padding:11px 14px;border-radius:14px;font-size:13px;font-weight:700;">📱 다음에도 바로 오도록 홈 화면에 추가</a>
-      </div>`;
+    const installLink=isMobile?`<a href="https://tech-asset.tistory.com/pages/PLAYZIP#install" target="_top" style="display:block;text-decoration:none;border:1px solid #ddd2f1;background:#fff;color:#675591;padding:11px 14px;border-radius:14px;font-size:13px;font-weight:700;">📱 다음에도 바로 오도록 홈 화면에 추가</a>`:'';
+    return `<div id="playzip-result-only" style="margin-top:18px;padding:17px 15px;border:1px solid #e7ddf3;border-radius:18px;background:linear-gradient(145deg,#fff,#faf6ff);text-align:center;box-shadow:0 8px 20px rgba(110,80,145,.07);"><div style="font-size:17px;font-weight:800;color:#4a3f4f;margin-bottom:5px;">다른 것도 해볼까요?</div><div style="font-size:12.5px;line-height:1.6;color:#8a7d8f;margin-bottom:12px;">사주 · 타로 · 나BTI를 PLAYZIP에서 골라 즐겨보세요.</div><a href="https://tech-asset.tistory.com/pages/PLAYZIP" target="_top" style="display:block;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-size:14px;font-weight:800;${isMobile?'margin-bottom:8px;':''}">PLAYZIP에서 다른 콘텐츠 보기 →</a>${installLink}</div>`;
   }
-
   function syncPlayzip(){
     try{
       const doc=frame.contentDocument||frame.contentWindow.document;
-      if(!doc)return;
-      const root=doc.getElementById('nabti-root');
-      if(!root)return;
+      const root=doc.getElementById('nabti-root');if(!root)return;
       const isResult=!!root.querySelector('.nabti-result-frame');
       const existing=doc.getElementById('playzip-result-only');
-
-      if(isResult && !existing){
-        const card=root.querySelector('.nabti-card');
-        if(card){
-          card.insertAdjacentHTML('beforeend',playzipHtml());
-        }
-      }else if(!isResult && existing){
-        existing.remove();
-      }
+      if(isResult&&!existing){const card=root.querySelector('.nabti-card');if(card)card.insertAdjacentHTML('beforeend',playzipHtml());}
+      else if(!isResult&&existing){existing.remove();}
     }catch(e){}
   }
-
   function postHeight(h){
     const next=Math.max(MIN_HEIGHT,Math.min(MAX_HEIGHT,Math.ceil(h)));
     if(Math.abs(next-lastHeight)<3)return;
-    lastHeight=next;
-    frame.style.height=next+'px';
-    // 신규/기존 티스토리 수신 코드 둘 다 호환
+    lastHeight=next;frame.style.height=next+'px';
     window.parent.postMessage({type:'resizeNabtiIframeV2',height:next},'*');
     window.parent.postMessage({type:'resizeNabtiIframe',height:next},'*');
   }
-
   function measure(){
     try{
       const doc=frame.contentDocument||frame.contentWindow.document;
-      if(!doc)return;
-      const root=doc.getElementById('nabti-root');
-      if(!root)return;
-      const rect=root.getBoundingClientRect();
-      const cs=doc.defaultView.getComputedStyle(root);
-      const mt=parseFloat(cs.marginTop)||0;
-      const mb=parseFloat(cs.marginBottom)||0;
-      const contentHeight=Math.max(root.scrollHeight,rect.height)+mt+mb+12;
-      postHeight(contentHeight);
+      const root=doc.getElementById('nabti-root');if(!root)return;
+      const rect=root.getBoundingClientRect(),cs=doc.defaultView.getComputedStyle(root);
+      const mt=parseFloat(cs.marginTop)||0,mb=parseFloat(cs.marginBottom)||0;
+      postHeight(Math.max(root.scrollHeight,rect.height)+mt+mb+12);
     }catch(e){}
   }
-
-  function schedule(){
-    clearTimeout(timer);
-    timer=setTimeout(function(){
-      syncPlayzip();
-      measure();
-    },60);
-  }
-
+  function schedule(){clearTimeout(timer);timer=setTimeout(function(){syncPlayzip();measure();},60);}
   function attachObservers(){
     try{
       const doc=frame.contentDocument||frame.contentWindow.document;
-      const root=doc.getElementById('nabti-root');
-      if(!root)return;
-      if(ro)ro.disconnect();
-      if(mo)mo.disconnect();
-
-      ro=new ResizeObserver(schedule);
-      ro.observe(root);
-
-      mo=new MutationObserver(schedule);
-      mo.observe(root,{subtree:true,childList:true,attributes:true,characterData:true});
-
-      doc.querySelectorAll('img').forEach(img=>{
-        if(!img.complete)img.addEventListener('load',schedule,{once:true});
-      });
+      const root=doc.getElementById('nabti-root');if(!root)return;
+      if(ro)ro.disconnect();if(mo)mo.disconnect();
+      ro=new ResizeObserver(schedule);ro.observe(root);
+      mo=new MutationObserver(schedule);mo.observe(root,{subtree:true,childList:true,attributes:true,characterData:true});
+      doc.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',schedule,{once:true});});
     }catch(e){}
   }
-
-  frame.addEventListener('load',function(){
-    attachObservers();
-    syncPlayzip();
-    measure();
-    [120,350,800,1500].forEach(ms=>setTimeout(function(){syncPlayzip();measure();},ms));
-  });
-
-  window.addEventListener('message',function(e){
-    if(e.source===frame.contentWindow){
-      schedule();
-    }
-  });
-
+  frame.addEventListener('load',function(){attachObservers();syncPlayzip();measure();[120,350,800,1500].forEach(ms=>setTimeout(function(){syncPlayzip();measure();},ms));});
+  window.addEventListener('message',function(e){if(e.source===frame.contentWindow)schedule();});
   frame.src=appUrl();
 })();
 </script>
