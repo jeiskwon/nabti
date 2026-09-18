@@ -14,7 +14,7 @@
 </head>
 <body>
 <!-- ============================================================
-  나BTI 테스트 - 티스토리 HTML 모드에 통째로 붙여넣으세요
+  나BTI 테스트 - GitHub Pages 독립 실행 버전
   ============================================================ -->
 <!-- 카카오톡 공유하기(카카오링크) SDK -->
 <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
@@ -436,17 +436,13 @@
   }
 
   .nabti-detail-wrap {
-    overflow: hidden;
-    max-height: 4000px;
+    overflow: visible;
+    max-height: none;
     opacity: 1;
-    transform: translateY(0);
-    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.4s ease;
+    transform: none;
   }
   .nabti-detail-wrap.nabti-collapsed {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-6px);
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, transform 0.2s ease;
+    display: none;
   }
 
   .nabti-hidden { display: none !important; }
@@ -714,8 +710,8 @@
 
   let state = { step: 0, answers: [], nickname: "" };
   const root = document.getElementById("nabti-root");
-  const linkUrl = "tech-asset.tistory.com/68";
-  const shareLinkUrl = "https://" + linkUrl;
+  const shareLinkUrl = "https://jeiskwon.github.io/nabti/";
+  const playzipUrl = "https://jeiskwon.github.io/playzip/";
 
   function resetState() {
     state = { step: 0, answers: [], nickname: "" };
@@ -1090,6 +1086,7 @@
           </button>
         </div>
         `}
+        <a href="${playzipUrl}" style="display:block;margin-top:12px;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-size:14px;font-weight:800;text-align:center;">PLAYZIP에서 다른 콘텐츠 보기 →</a>
       </div>
     `;
 
@@ -1133,30 +1130,6 @@
 })();
 </script>
 
-<script>
-  function sendHeightToParent() {
-    var contentHeight = Math.max(
-      document.documentElement.scrollHeight,
-      document.body.scrollHeight,
-      document.documentElement.offsetHeight,
-      document.body.offsetHeight,
-      600
-    );
-    window.parent.postMessage({ type: 'resizeNabtiIframe', height: contentHeight }, '*');
-  }
 
-  window.addEventListener('load', sendHeightToParent);
-  window.addEventListener('resize', sendHeightToParent);
-
-  if (window.ResizeObserver) {
-    var nabtiObserver = new ResizeObserver(function() {
-      sendHeightToParent();
-    });
-    nabtiObserver.observe(document.body);
-  }
-
-  setTimeout(sendHeightToParent, 300);
-  setTimeout(sendHeightToParent, 1000);
-</script>
 </body>
 </html>
