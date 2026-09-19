@@ -72,6 +72,27 @@
     margin: 0 auto 20px;
     border-radius: 16px;
   }
+  .nabti-start-card {
+    background:
+      radial-gradient(circle at 12% 10%, rgba(255,207,224,.48), transparent 28%),
+      radial-gradient(circle at 88% 16%, rgba(211,199,246,.48), transparent 28%),
+      linear-gradient(165deg,#fffaf3 0%,#fff6fa 48%,#f4f0ff 100%);
+    min-height:620px;padding:28px 22px 24px;
+  }
+  .nabti-start-kicker{text-align:center;font-size:11px;font-weight:850;letter-spacing:.12em;color:#b586a5;margin-bottom:9px}
+  .nabti-start-card .nabti-title{font-size:28px;line-height:1.3;color:#4a3f4f;margin-top:0}
+  .nabti-start-card .nabti-sub{font-size:14px;line-height:1.7;color:#8b7d90;margin-bottom:12px}
+  .nabti-start-visual{position:relative;height:250px;max-width:330px;margin:0 auto 12px}
+  .nabti-bubble{position:absolute;width:126px;height:126px;border-radius:30px;background:rgba(255,255,255,.82);box-shadow:0 12px 26px rgba(148,112,144,.12);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.9)}
+  .nabti-bubble img{width:92%;height:92%;object-fit:contain;display:block}
+  .nabti-bubble.a{left:7%;top:12px;transform:rotate(-5deg)}.nabti-bubble.b{right:7%;top:7px;transform:rotate(5deg)}
+  .nabti-bubble.c{left:18%;bottom:0;transform:rotate(3deg)}.nabti-bubble.d{right:18%;bottom:5px;transform:rotate(-3deg)}
+  .nabti-start-features{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:0 0 16px}
+  .nabti-start-features span{font-size:10px;font-weight:800;color:#8d748f;background:rgba(255,255,255,.72);border:1px solid #f0e3eb;padding:6px 9px;border-radius:999px}
+  .nabti-start-card .nabti-nickname-input{background:rgba(255,255,255,.9);border-color:#ecdde6}
+  .nabti-start-card .nabti-btn{background:linear-gradient(135deg,#ee8eac,#b9a2dc);box-shadow:0 10px 22px rgba(189,137,174,.18)}
+  .nabti-start-foot{text-align:center;color:#aa99a8;font-size:10px;line-height:1.5;margin-top:12px}
+  @media(max-width:520px){#nabti-root{margin:10px auto}.nabti-start-card{border-radius:0;min-height:calc(100vh - 20px);padding-top:24px}.nabti-start-visual{height:235px}.nabti-bubble{width:116px;height:116px}}
   .nabti-nickname-input {
     display: block;
     width: 100%;
@@ -805,15 +826,20 @@
 
   function renderStart() {
     root.innerHTML = `
-      <div class="nabti-card">
-        <img class="nabti-banner" src="${IMG.bgPattern}" alt="배경장식" />
-        <div class="nabti-title">🐾 나BTI 테스트</div>
-        <div class="nabti-sub">16가지 동물 캐릭터로 알아보는<br/>나의 성격 유형 + 예민함 점수</div>
-        <img class="nabti-cover-img" src="${IMG.coverImage}" alt="시작화면" />
+      <div class="nabti-card nabti-start-card">
+        <div class="nabti-start-kicker">PLAYZIP PERSONALITY</div>
+        <div class="nabti-title">나를 닮은 동물은<br/>누구일까?</div>
+        <div class="nabti-sub">16가지 동물 캐릭터로 내 성격과<br/>예민함의 결을 가볍게 알아보세요.</div>
+        <div class="nabti-start-visual" aria-label="나BTI 동물 캐릭터">
+          <div class="nabti-bubble a"><img src="${IMG.characters.INTJ}" alt="동물 캐릭터" /></div>
+          <div class="nabti-bubble b"><img src="${IMG.characters.ENFP}" alt="동물 캐릭터" /></div>
+          <div class="nabti-bubble c"><img src="${IMG.characters.ISFJ}" alt="동물 캐릭터" /></div>
+          <div class="nabti-bubble d"><img src="${IMG.characters.ESTP}" alt="동물 캐릭터" /></div>
+        </div>
+        <div class="nabti-start-features"><span>16유형</span><span>예민함 점수</span><span>궁합</span></div>
         <input type="text" id="nabti-nickname-input" class="nabti-nickname-input" placeholder="닉네임을 입력해주세요" maxlength="10" />
-        <button class="nabti-btn" id="nabti-start-btn">
-          <img src="${IMG.playButton}" alt="시작" /> 테스트 시작하기
-        </button>
+        <button class="nabti-btn" id="nabti-start-btn">내 동물 유형 찾기</button>
+        <div class="nabti-start-foot">정답을 고민하기보다 평소의 나와 가까운 쪽을 골라보세요.</div>
       </div>
     `;
     const nicknameInput = document.getElementById("nabti-nickname-input");
