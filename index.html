@@ -11,10 +11,6 @@
     background: #ffffff;
   }
 
-/* Result hierarchy: animal, three traits, optional detail. */
-.nabti-result-frame{max-width:210px;margin:0 auto 12px}.nabti-result-frame .character{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;object-fit:contain!important;border-radius:24px}
-.nabti-type-name{font-size:23px}.nabti-key-three{padding:14px 18px 14px 34px;text-align:left;background:#fff8ed;border-radius:18px;line-height:1.65;color:#514656;font-size:14px}.nabti-key-three li+li{margin-top:6px}
-.nabti-response-note{font-size:12px;line-height:1.65;color:#756a7b}.nabti-response-hint{font-size:12px;color:#81758a;margin:6px 0 14px}.nabti-options{display:grid;gap:9px}.nabti-option{margin:0;min-height:48px;border-radius:14px;font-size:14px}.nabti-option[aria-pressed="true"]{border:2px solid #926fa4;background:#f1e7f7}.nabti-option:focus-visible{outline:3px solid #926fa4;outline-offset:2px}.nabti-progress-wrap{flex-wrap:wrap;gap:3px}.nabti-sensitivity{background:#faf6ff;border:none}.nabti-gauge-wrap{display:none}.nabti-nickname-tag{border:0}.nabti-compat{background:#fff;border:1px solid #f0e7ed;border-radius:16px;font-size:13px;line-height:1.65}.nabti-start-foot{line-height:1.6}
 </style>
 </head>
 <body>
@@ -480,6 +476,10 @@
     font-weight: 700;
     margin-bottom: 10px;
   }
+/* Result hierarchy: animal, three traits, optional detail. */
+.nabti-result-frame{aspect-ratio:auto;max-width:210px;margin:0 auto 12px}.nabti-result-frame .character{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;object-fit:contain!important;border-radius:24px}
+.nabti-type-name{font-size:23px}.nabti-key-three{padding:14px 18px 14px 34px;text-align:left;background:#fff8ed;border-radius:18px;line-height:1.65;color:#514656;font-size:14px}.nabti-key-three li+li{margin-top:6px}
+.nabti-response-note{font-size:12px;line-height:1.65;color:#756a7b}.nabti-response-hint{font-size:12px;color:#81758a;margin:6px 0 14px}.nabti-options{display:grid;gap:9px}.nabti-option{margin:0;min-height:48px;border-radius:14px;font-size:14px}.nabti-option[aria-pressed="true"]{border:2px solid #926fa4;background:#f1e7f7}.nabti-option:focus-visible{outline:3px solid #926fa4;outline-offset:2px}.nabti-progress-wrap{flex-wrap:wrap;gap:3px}.nabti-sensitivity{background:#faf6ff;border:none}.nabti-gauge-wrap{display:none}.nabti-nickname-tag{border:0}.nabti-compat{background:#fff;border:1px solid #f0e7ed;border-radius:16px;font-size:13px;line-height:1.65}.nabti-start-foot{line-height:1.6}
 </style>
 
 <script>
@@ -877,7 +877,7 @@
         <div class="nabti-start-features"><span>16유형</span><span>자극 반응 스타일</span><span>궁합</span></div>
         <input type="text" id="nabti-nickname-input" class="nabti-nickname-input" placeholder="닉네임을 입력해주세요" maxlength="10" />
         <button class="nabti-btn" id="nabti-start-btn">내 동물 유형 찾기</button>
-        <div class="nabti-start-foot">정답을 고민하기보다 평소의 나와 가까운 쪽을 골라보세요.</div>
+        <div class="nabti-start-foot">16문항에 평소 모습과 얼마나 가까운지 5단계로 답해주세요. 재미로 살펴보는 자기이해 테스트입니다.</div>
       </div>
     `;
     const nicknameInput = document.getElementById("nabti-nickname-input");
