@@ -12,6 +12,7 @@
   }
 
 </style>
+<script src="https://jeiskwon.github.io/playzip/saju/shared-result.js"></script>
 </head>
 <body>
 <!-- ============================================================
@@ -480,13 +481,15 @@
 .nabti-result-frame{aspect-ratio:auto;max-width:210px;margin:0 auto 12px}.nabti-result-frame .character{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;object-fit:contain!important;border-radius:24px}
 .nabti-type-name{font-size:23px}.nabti-key-three{padding:14px 18px 14px 34px;text-align:left;background:#fff8ed;border-radius:18px;line-height:1.65;color:#514656;font-size:14px}.nabti-key-three li+li{margin-top:6px}
 .nabti-response-note{font-size:12px;line-height:1.65;color:#756a7b}.nabti-response-hint{font-size:12px;color:#81758a;margin:6px 0 14px}.nabti-options{display:grid;gap:9px}.nabti-option{margin:0;min-height:48px;border-radius:14px;font-size:14px}.nabti-option[aria-pressed="true"]{border:2px solid #926fa4;background:#f1e7f7}.nabti-option:focus-visible{outline:3px solid #926fa4;outline-offset:2px}.nabti-progress-wrap{flex-wrap:wrap;gap:3px}.nabti-sensitivity{background:#faf6ff;border:none}.nabti-gauge-wrap{display:none}.nabti-nickname-tag{border:0}.nabti-compat{background:#fff;border:1px solid #f0e7ed;border-radius:16px;font-size:13px;line-height:1.65}.nabti-start-foot{line-height:1.6}
+
+body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:flex;align-items:center} button{font-family:inherit}
 </style>
 
 <script>
 (function() {
   const IMG = {
     bgPattern: "https://i.ibb.co/d09jdwyy/bg-pattern.png",
-    coverImage: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EC%8B%9C%EC%9E%91%20%ED%99%94%EB%A9%B4%20%EB%8C%80%ED%91%9C%20%EC%9D%B4%EB%AF%B8%EC%A7%80.webp",
+    coverImage: "https://jeiskwon.github.io/tech-asset/image/nabti/%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EC%8B%9C%EC%9E%91%20%ED%99%94%EB%A9%B4%20%EB%8C%80%ED%91%9C%20%EC%9D%B4%EB%AF%B8%EC%A7%80.webp",
     playButton: "https://i.ibb.co/vv6chMm7/play-button.png",
     pawPrint: "https://i.ibb.co/TDSHBk99/paw-print.png",
     loadingChick: "https://i.ibb.co/QFj7K5wc/loading-chick.png",
@@ -494,21 +497,21 @@
     shareIcon: "https://i.ibb.co/4ZVZnYdF/share-icon.png",
     badgeRibbon: "https://i.ibb.co/pBR8BDV5/badge-ribbon.png",
     gaugeBar: "https://i.ibb.co/3YzHY1Bx/gauge-bar.png",
-    hedgehogGauge: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/%EC%98%88%EB%AF%BC%ED%95%A8%20%EC%A0%90%EC%88%98%20%EA%B2%8C%EC%9D%B4%EC%A7%80%20%EC%BA%90%EB%A6%AD%ED%84%B0.webp",
+    hedgehogGauge: "https://jeiskwon.github.io/tech-asset/image/nabti/%EC%98%88%EB%AF%BC%ED%95%A8%20%EC%A0%90%EC%88%98%20%EA%B2%8C%EC%9D%B4%EC%A7%80%20%EC%BA%90%EB%A6%AD%ED%84%B0.webp",
     snsFrame: "https://i.ibb.co/dsBkCBLd/sns-frame.png",
     iconEmotion: "https://i.ibb.co/JW5pw688/icon-emotion.png",
     iconRelationship: "https://i.ibb.co/S4QwJqSB/icon-relationship.png",
     iconAlonetime: "https://i.ibb.co/cKrQwkqF/icon-alonetime.png",
     iconPlanning: "https://i.ibb.co/nsfWnRb8/icon-planning.png",
     characters: {
-      INTJ: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/INTJ.webp", INTP: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/INTP.webp",
-      ENTJ: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ENTJ.webp", ENTP: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ENTP.webp",
-      INFJ: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/INFJ.webp", INFP: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/INFP.webp",
-      ENFJ: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ENFJ.webp", ENFP: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ENFP.webp",
-      ISTJ: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ISTJ.webp", ISFJ: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ISFJ.webp",
-      ESTJ: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ESTJ.webp", ESFJ: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ESFJ.webp",
-      ISTP: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ISTP.webp", ISFP: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ISFP.webp",
-      ESTP: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ESTP.webp", ESFP: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/ESFP.webp"
+      INTJ: "https://jeiskwon.github.io/tech-asset/image/nabti/INTJ.webp", INTP: "https://jeiskwon.github.io/tech-asset/image/nabti/INTP.webp",
+      ENTJ: "https://jeiskwon.github.io/tech-asset/image/nabti/ENTJ.webp", ENTP: "https://jeiskwon.github.io/tech-asset/image/nabti/ENTP.webp",
+      INFJ: "https://jeiskwon.github.io/tech-asset/image/nabti/INFJ.webp", INFP: "https://jeiskwon.github.io/tech-asset/image/nabti/INFP.webp",
+      ENFJ: "https://jeiskwon.github.io/tech-asset/image/nabti/ENFJ.webp", ENFP: "https://jeiskwon.github.io/tech-asset/image/nabti/ENFP.webp",
+      ISTJ: "https://jeiskwon.github.io/tech-asset/image/nabti/ISTJ.webp", ISFJ: "https://jeiskwon.github.io/tech-asset/image/nabti/ISFJ.webp",
+      ESTJ: "https://jeiskwon.github.io/tech-asset/image/nabti/ESTJ.webp", ESFJ: "https://jeiskwon.github.io/tech-asset/image/nabti/ESFJ.webp",
+      ISTP: "https://jeiskwon.github.io/tech-asset/image/nabti/ISTP.webp", ISFP: "https://jeiskwon.github.io/tech-asset/image/nabti/ISFP.webp",
+      ESTP: "https://jeiskwon.github.io/tech-asset/image/nabti/ESTP.webp", ESFP: "https://jeiskwon.github.io/tech-asset/image/nabti/ESFP.webp"
     }
   };
 
@@ -825,7 +828,7 @@
   // 캐릭터 이미지가 webp라서 아이폰 카카오톡에서 미리보기 이미지가 안 뜨는 문제 방지용:
   // App sharing uses the native SDK; this public image is only a share preview.
   function toKakaoSafeImage(url) {
-    return "https://jeiskwon.github.io/playzip/playzip-home.webp";
+    return "https://jeiskwon.github.io/playzip/share-preview-v2.png";
   }
 
   function shareToKakao({ title, description, imageUrl, link }) {
@@ -867,7 +870,7 @@
       <div class="nabti-card nabti-start-card">
         <div class="nabti-start-kicker">PLAYZIP PERSONALITY</div>
         <div class="nabti-title">나를 닮은 동물은<br/>누구일까?</div>
-        <div class="nabti-sub">16가지 동물 캐릭터로 내 성격과<br/>예민함의 결을 가볍게 알아보세요.</div>
+        <div class="nabti-sub">16가지 동물 캐릭터로 내 성격과<br/>자극에 반응하는 모습을 가볍게 알아보세요.</div>
         <div class="nabti-start-visual" aria-label="나BTI 동물 캐릭터">
           <div class="nabti-bubble a"><img src="${IMG.characters.INTJ}" alt="동물 캐릭터" /></div>
           <div class="nabti-bubble b"><img src="${IMG.characters.ENFP}" alt="동물 캐릭터" /></div>
@@ -1156,7 +1159,7 @@
           </button>
         </div>
         `}
-        <a href="${playzipUrl}" style="display:block;margin-top:12px;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-size:14px;font-weight:800;text-align:center;">PLAYZIP에서 다른 콘텐츠 보기 →</a>
+        <a href="${window.AndroidPlayzip ? playzipUrl : window.playzipAppLink(playzipUrl)}" style="display:block;margin-top:12px;text-decoration:none;background:linear-gradient(135deg,#8164d8,#ed75a8);color:#fff;padding:13px 14px;border-radius:14px;font-size:14px;font-weight:800;text-align:center;">PLAYZIP에서 다른 콘텐츠 보기 →</a>
       </div>
     `;
 
@@ -1168,6 +1171,7 @@
     };
 
     document.getElementById("nabti-retry-btn").onclick = () => {
+      if(isShared && !window.AndroidPlayzip){location.href=window.playzipAppLink(shareLinkUrl);return;}
       resetState();
       // 공유 링크의 ?e=..&s=..&n=.. 같은 파라미터를 지워서, 새로고침해도 다시 남의 결과가 뜨지 않게 한다.
       if (window.history && window.history.replaceState) {
