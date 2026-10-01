@@ -10,6 +10,11 @@
     padding: 0;
     background: #ffffff;
   }
+
+/* Result hierarchy: animal, three traits, optional detail. */
+.nabti-result-frame{max-width:210px;margin:0 auto 12px}.nabti-result-frame .character{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;object-fit:contain!important;border-radius:24px}
+.nabti-type-name{font-size:23px}.nabti-key-three{padding:14px 18px 14px 34px;text-align:left;background:#fff8ed;border-radius:18px;line-height:1.65;color:#514656;font-size:14px}.nabti-key-three li+li{margin-top:6px}
+.nabti-response-note{font-size:12px;line-height:1.65;color:#756a7b}.nabti-response-hint{font-size:12px;color:#81758a;margin:6px 0 14px}.nabti-options{display:grid;gap:9px}.nabti-option{margin:0;min-height:48px;border-radius:14px;font-size:14px}.nabti-option[aria-pressed="true"]{border:2px solid #926fa4;background:#f1e7f7}.nabti-option:focus-visible{outline:3px solid #926fa4;outline-offset:2px}.nabti-progress-wrap{flex-wrap:wrap;gap:3px}.nabti-sensitivity{background:#faf6ff;border:none}.nabti-gauge-wrap{display:none}.nabti-nickname-tag{border:0}.nabti-compat{background:#fff;border:1px solid #f0e7ed;border-radius:16px;font-size:13px;line-height:1.65}.nabti-start-foot{line-height:1.6}
 </style>
 </head>
 <body>
@@ -662,73 +667,101 @@
     return { ranked, best, bestPct, reason };
   }
 
+  const RESPONSE_LABELS = ["전혀 아니다", "대체로 아니다", "반반이다", "대체로 그렇다", "매우 그렇다"];
   const QUESTIONS = [
-    { icon: "iconRelationship", q: "주말에 에너지를 얻는 방법은?", options: [
-      { t: "친구들 여럿이랑 왁자지껄 노는 것", v: "E" },
-      { t: "혼자 조용히 쉬면서 재충전하는 것", v: "I" }
-    ]},
-    { icon: "iconRelationship", q: "모임에 가면 나는?", options: [
-      { t: "여기저기 다니며 다양한 사람과 대화한다", v: "E" },
-      { t: "친한 사람 한두 명 옆에 주로 있는다", v: "I" }
-    ]},
-    { icon: "iconRelationship", q: "새로운 사람을 만났을 때 나는?", options: [
-      { t: "먼저 다가가서 말을 건다", v: "E" },
-      { t: "상대가 다가오길 기다리는 편이다", v: "I" }
-    ]},
-    { icon: "iconPlanning", q: "이야기할 때 나는 주로?", options: [
-      { t: "구체적인 사실과 경험 위주로 말한다", v: "S" },
-      { t: "가능성이나 상상 속 이야기를 즐겨 한다", v: "N" }
-    ]},
-    { icon: "iconPlanning", q: "새로운 일을 배울 때 나는?", options: [
-      { t: "정해진 순서와 매뉴얼을 그대로 따른다", v: "S" },
-      { t: "큰 그림부터 이해하고 응용해본다", v: "N" }
-    ]},
-    { icon: "iconPlanning", q: "나의 취향은 대체로?", options: [
-      { t: "검증됐고 실용적인 것을 선호한다", v: "S" },
-      { t: "특이하고 새로운 것에 끌린다", v: "N" }
-    ]},
-    { icon: "iconEmotion", q: "중요한 결정을 내릴 때 나는?", options: [
-      { t: "논리적인 기준과 데이터를 먼저 본다", v: "T" },
-      { t: "사람들의 감정과 관계를 먼저 고려한다", v: "F" }
-    ]},
-    { icon: "iconEmotion", q: "갈등 상황이 생기면 나는?", options: [
-      { t: "원인을 분석하고 해결책부터 찾는다", v: "T" },
-      { t: "상대의 감정을 다독이는 것부터 한다", v: "F" }
-    ]},
-    { icon: "iconEmotion", q: "칭찬을 받는다면 어떤 말이 더 좋을까?", options: [
-      { t: "\"결과가 확실히 좋았어\"", v: "T" },
-      { t: "\"정말 애 많이 썼구나\"", v: "F" }
-    ]},
-    { icon: "iconAlonetime", q: "여행을 갈 때 나는?", options: [
-      { t: "세부 일정을 미리 다 짜두는 편이다", v: "J" },
-      { t: "일단 떠나서 즉흥적으로 정하는 편이다", v: "P" }
-    ]},
-    { icon: "iconAlonetime", q: "마감이 다가오면 나는?", options: [
-      { t: "미리미리 끝내놓아야 마음이 편하다", v: "J" },
-      { t: "닥쳐야 오히려 집중이 잘 된다", v: "P" }
-    ]},
-    { icon: "iconAlonetime", q: "내 방/책상 상태는?", options: [
-      { t: "항상 정리정돈이 되어 있어야 한다", v: "J" },
-      { t: "좀 어질러져 있어도 크게 상관없다", v: "P" }
-    ]},
-    { icon: "iconAlonetime", sensitivity: true, q: "다른 사람의 표정 변화를 금방 알아차리는 편인가요?", options: [
-      { t: "전혀 아니다", v: 1 }, { t: "가끔 그렇다", v: 2 },
-      { t: "꽤 그렇다", v: 3 }, { t: "매우 그렇다", v: 4 }
-    ]},
-    { icon: "iconAlonetime", sensitivity: true, q: "작은 소음이나 냄새에도 쉽게 신경이 쓰이나요?", options: [
-      { t: "전혀 아니다", v: 1 }, { t: "가끔 그렇다", v: 2 },
-      { t: "꽤 그렇다", v: 3 }, { t: "매우 그렇다", v: 4 }
-    ]},
-    { icon: "iconAlonetime", sensitivity: true, q: "누군가의 비판이 오래도록 마음에 남는 편인가요?", options: [
-      { t: "전혀 아니다", v: 1 }, { t: "가끔 그렇다", v: 2 },
-      { t: "꽤 그렇다", v: 3 }, { t: "매우 그렇다", v: 4 }
-    ]},
-    { icon: "iconAlonetime", sensitivity: true, q: "하루 일과 후 혼자만의 회복 시간이 꼭 필요한가요?", options: [
-      { t: "전혀 아니다", v: 1 }, { t: "가끔 그렇다", v: 2 },
-      { t: "꽤 그렇다", v: 3 }, { t: "매우 그렇다", v: 4 }
-    ]}
-  ];
-
+  {
+    "icon": "iconRelationship",
+    "q": "여러 사람과 함께 시간을 보내면 에너지가 생긴다.",
+    "first": "E",
+    "second": "I"
+  },
+  {
+    "icon": "iconRelationship",
+    "q": "모임에서는 친한 한두 사람과 깊게 이야기하는 편이다.",
+    "first": "I",
+    "second": "E"
+  },
+  {
+    "icon": "iconRelationship",
+    "q": "처음 만난 사람에게 먼저 말을 거는 편이다.",
+    "first": "E",
+    "second": "I"
+  },
+  {
+    "icon": "iconPlanning",
+    "q": "이야기할 때 구체적인 사실과 경험을 먼저 떠올린다.",
+    "first": "S",
+    "second": "N"
+  },
+  {
+    "icon": "iconPlanning",
+    "q": "새로운 일을 배울 때 큰 그림과 응용 가능성부터 생각한다.",
+    "first": "N",
+    "second": "S"
+  },
+  {
+    "icon": "iconPlanning",
+    "q": "새로운 것보다 검증되고 실용적인 것을 선호한다.",
+    "first": "S",
+    "second": "N"
+  },
+  {
+    "icon": "iconEmotion",
+    "q": "중요한 결정에서는 감정보다 논리와 근거를 먼저 살핀다.",
+    "first": "T",
+    "second": "F"
+  },
+  {
+    "icon": "iconEmotion",
+    "q": "갈등이 생기면 해결책보다 상대의 감정을 먼저 살핀다.",
+    "first": "F",
+    "second": "T"
+  },
+  {
+    "icon": "iconEmotion",
+    "q": "노력을 알아주는 말보다 결과가 좋았다는 칭찬이 더 반갑다.",
+    "first": "T",
+    "second": "F"
+  },
+  {
+    "icon": "iconAlonetime",
+    "q": "여행 전에 세부 일정을 정해두면 마음이 편하다.",
+    "first": "J",
+    "second": "P"
+  },
+  {
+    "icon": "iconAlonetime",
+    "q": "마감 직전에 오히려 집중이 잘 되는 편이다.",
+    "first": "P",
+    "second": "J"
+  },
+  {
+    "icon": "iconAlonetime",
+    "q": "방이나 책상이 정돈되어 있어야 편하다.",
+    "first": "J",
+    "second": "P"
+  },
+  {
+    "icon": "iconAlonetime",
+    "q": "다른 사람의 표정 변화를 금방 알아차린다.",
+    "sensitivity": true
+  },
+  {
+    "icon": "iconAlonetime",
+    "q": "작은 소음이나 냄새에도 쉽게 신경이 쓰인다.",
+    "sensitivity": true
+  },
+  {
+    "icon": "iconAlonetime",
+    "q": "누군가의 비판이 오래 마음에 남는 편이다.",
+    "sensitivity": true
+  },
+  {
+    "icon": "iconAlonetime",
+    "q": "하루 일과 후 혼자 회복하는 시간이 필요하다.",
+    "sensitivity": true
+  }
+];
   let state = { step: 0, answers: [], nickname: "" };
   const root = document.getElementById("nabti-root");
   const shareLinkUrl = "https://jeiskwon.github.io/nabti/";
@@ -748,10 +781,11 @@
       .replace(/'/g, "&#39;");
   }
 
-  // 결과(scores, 예민함 점수, 닉네임)를 URL 파라미터에 담아 "결과가 곧바로 보이는" 공유 링크를 만든다.
+  // 결과(scores, 자극 반응 스타일, 닉네임)를 URL 파라미터에 담아 "결과가 곧바로 보이는" 공유 링크를 만든다.
   // E/S/T/J 는 0~3 중 하나이며, I/N/F/P 는 (3 - 값)으로 복원 가능해서 4개 숫자만 저장하면 충분하다.
   function buildResultUrl(scores, sensitivity, nickname) {
     const params = new URLSearchParams();
+    params.set("v", "2");
     params.set("e", scores.E);
     params.set("s", scores.S);
     params.set("t", scores.T);
@@ -766,15 +800,19 @@
     const params = new URLSearchParams(window.location.search);
     if (!["e", "s", "t", "j", "sen"].every(k => params.has(k))) return null;
 
-    const e = parseInt(params.get("e"), 10);
-    const s = parseInt(params.get("s"), 10);
-    const t = parseInt(params.get("t"), 10);
-    const j = parseInt(params.get("j"), 10);
-    const sen = parseInt(params.get("sen"), 10);
+    const e = Number(params.get("e"));
+    const s = Number(params.get("s"));
+    const t = Number(params.get("t"));
+    const j = Number(params.get("j"));
+    const sen = Number(params.get("sen"));
 
+    if (!["e","s","t","j","sen"].every(k=>/^\d+(?:\.\d+)?$/.test(params.get(k)))) return null;
     if ([e, s, t, j].some(v => isNaN(v) || v < 0 || v > 3)) return null;
     if (isNaN(sen) || sen < 4 || sen > 16) return null;
 
+    if (params.has("v") && params.get("v") !== "2") return null;
+    if ([e,s,t,j].some(v => (params.get("v") === "2" ? !Number.isInteger(v * 4) : !Number.isInteger(v)))) return null;
+    if (params.get("v") !== "2" && !Number.isInteger(sen)) return null;
     const nickname = escapeHtml((params.get("n") || "친구").slice(0, 10));
 
     return {
@@ -785,9 +823,9 @@
   }
 
   // 캐릭터 이미지가 webp라서 아이폰 카카오톡에서 미리보기 이미지가 안 뜨는 문제 방지용:
-  // wsrv.nl 이미지 프록시를 거쳐 jpg로 즉시 변환한 주소를 만들어준다. (원본 이미지 파일은 그대로 둬도 됨)
+  // App sharing uses the native SDK; this public image is only a share preview.
   function toKakaoSafeImage(url) {
-    return "https://wsrv.nl/?url=" + encodeURIComponent(url) + "&output=jpg&w=800";
+    return "https://jeiskwon.github.io/playzip/playzip-home.webp";
   }
 
   function shareToKakao({ title, description, imageUrl, link }) {
@@ -836,7 +874,7 @@
           <div class="nabti-bubble c"><img src="${IMG.characters.ISFJ}" alt="동물 캐릭터" /></div>
           <div class="nabti-bubble d"><img src="${IMG.characters.ESTP}" alt="동물 캐릭터" /></div>
         </div>
-        <div class="nabti-start-features"><span>16유형</span><span>예민함 점수</span><span>궁합</span></div>
+        <div class="nabti-start-features"><span>16유형</span><span>자극 반응 스타일</span><span>궁합</span></div>
         <input type="text" id="nabti-nickname-input" class="nabti-nickname-input" placeholder="닉네임을 입력해주세요" maxlength="10" />
         <button class="nabti-btn" id="nabti-start-btn">내 동물 유형 찾기</button>
         <div class="nabti-start-foot">정답을 고민하기보다 평소의 나와 가까운 쪽을 골라보세요.</div>
@@ -871,8 +909,8 @@
 
   function renderQuestion() {
     const q = QUESTIONS[state.step];
-    const optionsHtml = q.options.map((opt, idx) => `
-      <button class="nabti-option" data-idx="${idx}">${opt.t}</button>
+    const optionsHtml = RESPONSE_LABELS.map((opt, idx) => `
+      <button class="nabti-option" aria-pressed="${state.answers[state.step] === idx}" data-idx="${idx}">${opt}</button>
     `).join("");
 
     root.innerHTML = `
@@ -880,7 +918,7 @@
         ${renderProgress()}
         <img class="nabti-qicon" src="${IMG[q.icon]}" alt="" />
         <div class="nabti-question">${q.q}</div>
-        ${optionsHtml}
+        <p class="nabti-response-hint">평소의 나와 얼마나 가까운가요?</p><div class="nabti-options">${optionsHtml}</div>
         ${state.step > 0 ? '<button class="nabti-prev-link" id="nabti-prev-btn">← 이전 질문으로</button>' : ''}
       </div>
     `;
@@ -923,11 +961,12 @@
     QUESTIONS.forEach((q, i) => {
       const idx = state.answers[i];
       if (idx === undefined) return;
-      const chosen = q.options[idx];
+      if (!Number.isInteger(idx) || idx < 0 || idx > 4) throw new Error("Invalid answer");
       if (q.sensitivity) {
-        sensitivity += chosen.v;
+        sensitivity += 1 + idx * 0.75;
       } else {
-        scores[chosen.v]++;
+        scores[q.first] += idx / 4;
+        scores[q.second] += (4 - idx) / 4;
       }
     });
     return { scores, sensitivity };
@@ -972,20 +1011,23 @@
     // 없으면(=방금 테스트를 마친 본인) 지금까지의 답변으로 새로 계산한다.
     const isShared = !!sharedData;
     const { scores, sensitivity } = sharedData || calcScores();
+    window.__PLAYZIP_RESULT_URL__ = buildResultUrl(scores, sensitivity, state.nickname);
     const type = calcType(scores);
     const result = RESULTS[type];
     const charUrl = IMG.characters[type];
     const compat = calcCompatDetail(scores, type);
+    const mixedAxes = calcAxisPercents(scores).filter(a => a.leftPct >= 40 && a.leftPct <= 60);
+    const mixedNote = mixedAxes.length ? mixedAxes.map(a=>a.leftLabel+"·"+a.rightLabel).join(", ")+"은 양쪽 성향이 가까워요. 아래 동물은 대표 후보이며 상황에 따라 다른 후보도 어울릴 수 있어요." : "이번 답변에서 상대적으로 가까운 동물이에요. 상황과 시기에 따라 달라질 수 있어요.";
     const compatType = compat.best.type;
     const compatResult = RESULTS[compatType];
     const sensitivityMax = 16, sensitivityMin = 4;
     const pct = Math.round(((sensitivity - sensitivityMin) / (sensitivityMax - sensitivityMin)) * 100);
     const fillRight = 100 - pct;
 
-    let sensitivityDesc = "예민함 점수가 낮은 편이에요. 웬만한 자극에는 잘 흔들리지 않는 무던한 타입!";
-    if (pct >= 75) sensitivityDesc = "예민함 점수가 아주 높아요! 작은 변화도 섬세하게 알아차리는 타입이에요.";
-    else if (pct >= 50) sensitivityDesc = "예민함 점수가 평균보다 높은 편이에요. 주변 자극에 신경을 잘 쓰는 타입!";
-    else if (pct >= 25) sensitivityDesc = "예민함 점수가 무난한 편이에요. 상황에 따라 유연하게 반응하는 타입!";
+    let sensitivityDesc = "이번 답변에서는 자극을 비교적 편하게 넘기는 쪽에 가까워요.";
+    if (pct >= 75) sensitivityDesc = "이번 답변에서는 작은 자극도 섬세하게 느끼는 쪽에 가까워요. 회복 시간을 챙겨보세요.";
+    else if (pct >= 50) sensitivityDesc = "이번 답변에서는 주변 자극을 잘 알아차리는 쪽에 가까워요.";
+    else if (pct >= 25) sensitivityDesc = "이번 답변에서는 상황에 따라 반응이 달라지는 쪽에 가까워요.";
 
     const axisRows = calcAxisPercents(scores).map(a => `
       <div class="nabti-trait-row">
@@ -1015,17 +1057,19 @@
       <div class="nabti-card" style="background: linear-gradient(160deg, ${result.color[1]}22, #ffffff);">
         <div class="nabti-result-frame">
           <img class="character" src="${charUrl}" alt="${type}" />
-          <img class="frame" src="${IMG.snsFrame}" alt="" />
-          <img class="nabti-badge" src="${IMG.badgeRibbon}" alt="" />
+          
+          
         </div>
-        <div class="nabti-type-code">${type}</div>
+        <div class="nabti-type-code">${mixedAxes.length ? "대표 후보 · " : ""}${type}</div>
         <div class="nabti-type-name">${result.animal}</div>
-        <div class="nabti-blurb">${result.blurb}</div>
+        <div class="nabti-blurb">${mixedAxes.length >= 3 ? "중간 응답이 많아 한 유형으로 단정하기 어려워요. 가까운 후보들을 함께 살펴보세요." : result.blurb}</div>
+        <ul class="nabti-key-three">${(mixedAxes.length >= 3 ? ["상황에 따라 양쪽 성향을 오갈 수 있어요", "지금 편한 방식과 평소의 방식을 비교해보세요", "유형보다 내 응답의 흐름을 먼저 살펴보세요"] : result.keyTraits.slice(0,3)).map(t=>`<li>${t}</li>`).join("")}</ul>
+        <p class="nabti-response-note">${mixedNote}</p>
 
         <div class="nabti-sensitivity">
           <div class="nabti-sensitivity-title">
             <img src="${IMG.hedgehogGauge}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" />
-            예민함 점수 ${pct}%
+            자극 반응 스타일 · ${pct < 25 ? "편하게 넘기는 편" : pct < 50 ? "상황에 따라 달라요" : pct < 75 ? "잘 알아차리는 편" : "섬세하게 느끼는 편"}
           </div>
           <div class="nabti-gauge-wrap">
             <img class="gauge-bg" src="${IMG.gaugeBar}" alt="" />
@@ -1037,7 +1081,7 @@
         <div class="nabti-nickname-tag">${state.nickname}님은 <b>${result.animal}</b>상이시네요!</div>
 
         <div class="nabti-compat">
-          💞 ${state.nickname}님과 잘 맞는 유형은 <b>[${compatType}] ${compatResult.animal}</b>예요! (궁합 지수 ${compat.bestPct}%)<br/>
+          ${mixedAxes.length >= 3 ? "중간 응답이 많아 특정 궁합을 추천하기 어려워요." : `함께 살펴볼 동물 · <b>[${compatType}] ${compatResult.animal}</b>`}<br/>
           친구 결과랑 비교해보고 싶다면 아래 공유 버튼을 눌러 결과를 보내보세요 🐾
         </div>
 
@@ -1045,7 +1089,7 @@
 
         <div class="nabti-detail-wrap nabti-collapsed" id="nabti-detail-wrap">
           <div class="nabti-detail-section">
-            <div class="nabti-detail-title">📊 성향 비율</div>
+            <div class="nabti-detail-title">응답으로 보는 성향</div><p class="nabti-response-note">비율은 문항 응답을 정리한 값입니다. 인구 평균, 검사 정확도 또는 궁합 확률을 뜻하지 않습니다. 재미로 살펴보는 자기이해 테스트이며 공식 성격검사·심리진단이 아닙니다.</p>
             ${axisRows}
           </div>
 
@@ -1138,7 +1182,7 @@
         const resultUrl = buildResultUrl(scores, sensitivity, state.nickname);
         shareToKakao({
           title: `${state.nickname}님은 ${result.animal}상이시네요! (${type})`,
-          description: `${result.blurb} 궁합 좋은 유형은 [${compatType}] ${compatResult.animal}예요!`,
+          description: `${result.blurb} 이번 답변에 가까운 동물 후보를 함께 살펴보세요.`,
           imageUrl: charUrl,
           link: resultUrl
         });
@@ -1159,3 +1203,4 @@
 
 </body>
 </html>
+
