@@ -13,6 +13,8 @@
 
 
 .nabti-result-frame .character{object-fit:contain!important;width:100%;height:100%;max-height:340px}.nabti-bubble img{object-fit:contain!important}.nabti-bubble{background:transparent!important;box-shadow:none!important}
+
+.nabti-season-badge{display:table;margin:0 auto 12px;padding:6px 12px;border-radius:999px;background:#f3e6d6;color:#755031;font-size:11px;font-weight:800}.nabti-season-badge[hidden]{display:none}[data-theme="halloween"] .nabti-start-card{background:linear-gradient(150deg,#fff3e7,#f4ecfb)}
 </style>
 <script src="https://jeiskwon.github.io/playzip/saju/shared-result.js"></script>
 </head>
@@ -487,6 +489,9 @@
 body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:flex;align-items:center} button{font-family:inherit}
 </style>
 
+<script>window.PlayzipCharacterAssetRoot="https://jeiskwon.github.io/playzip/";</script>
+<script src="https://jeiskwon.github.io/playzip/character-theme-catalog.js"></script>
+<script src="https://jeiskwon.github.io/playzip/character-themes.js"></script>
 <script>
 (function() {
   const IMG = {
@@ -516,6 +521,20 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
       ESTP: "https://jeiskwon.github.io/playzip/characters/nabti-a/ESTP.webp", ESFP: "https://jeiskwon.github.io/playzip/characters/nabti-a/ESFP.webp"
     }
   };
+
+  function characterUrl(type){return window.PlayzipCharacters.resolve(type,IMG.characters[type]);}
+  function themeBadge(){const theme=window.PlayzipCharacters.current();return `<span class="nabti-season-badge" data-season-badge ${theme?'':'hidden'}>${theme?theme.label:''}</span>`;}
+  function refreshCharacterArtwork(){
+    const theme=window.PlayzipCharacters.current();root.dataset.theme=theme?theme.id:'';
+    root.querySelectorAll('img[data-character]').forEach(img=>{
+      const type=img.dataset.character,src=characterUrl(type);
+      img.onerror=()=>{img.onerror=null;img.src=window.PlayzipCharacters.asset(IMG.characters[type]);};
+      if(img.getAttribute('src')!==src)img.src=src;
+    });
+    root.querySelectorAll('[data-season-badge]').forEach(e=>{e.hidden=!theme;e.textContent=theme?theme.label:'';});
+  }
+  window.refreshPlayzipCharacterArtwork=refreshCharacterArtwork;
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCharacterArtwork();});
 
   const RESULTS = {
     INTJ: { animal: "신비로운 부엉이", species: "부엉이", color: ["#3a3560", "#b8a9d9"], blurb: "차분하고 통찰력 있는 전략가 타입. 혼자만의 세계에서 큰 그림을 그리는 걸 좋아하고, 한번 정한 목표는 끝까지 파고들어요.",
@@ -871,13 +890,14 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
     root.innerHTML = `
       <div class="nabti-card nabti-start-card">
         <div class="nabti-start-kicker">PLAYZIP PERSONALITY</div>
+        ${themeBadge()}
         <div class="nabti-title">나를 닮은 동물은<br/>누구일까?</div>
         <div class="nabti-sub">16가지 동물 캐릭터로 내 성격과<br/>자극에 반응하는 모습을 가볍게 알아보세요.</div>
         <div class="nabti-start-visual" aria-label="나BTI 동물 캐릭터">
-          <div class="nabti-bubble a"><img src="${IMG.characters.INTJ}" alt="동물 캐릭터" /></div>
-          <div class="nabti-bubble b"><img src="${IMG.characters.ENFP}" alt="동물 캐릭터" /></div>
-          <div class="nabti-bubble c"><img src="${IMG.characters.ISFJ}" alt="동물 캐릭터" /></div>
-          <div class="nabti-bubble d"><img src="${IMG.characters.ESTP}" alt="동물 캐릭터" /></div>
+          <div class="nabti-bubble a"><img data-character="INTJ" src="${characterUrl("INTJ")}" alt="동물 캐릭터" /></div>
+          <div class="nabti-bubble b"><img data-character="ENFP" src="${characterUrl("ENFP")}" alt="동물 캐릭터" /></div>
+          <div class="nabti-bubble c"><img data-character="ISFJ" src="${characterUrl("ISFJ")}" alt="동물 캐릭터" /></div>
+          <div class="nabti-bubble d"><img data-character="ESTP" src="${characterUrl("ESTP")}" alt="동물 캐릭터" /></div>
         </div>
         <div class="nabti-start-features"><span>16유형</span><span>자극 반응 스타일</span><span>궁합</span></div>
         <input type="text" id="nabti-nickname-input" class="nabti-nickname-input" placeholder="닉네임을 입력해주세요" maxlength="10" />
@@ -885,6 +905,7 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
         <div class="nabti-start-foot">16문항에 평소 모습과 얼마나 가까운지 5단계로 답해주세요. 재미로 살펴보는 자기이해 테스트입니다.</div>
       </div>
     `;
+    refreshCharacterArtwork();
     const nicknameInput = document.getElementById("nabti-nickname-input");
     document.getElementById("nabti-start-btn").onclick = () => {
       const nickname = nicknameInput.value.trim();
@@ -1019,7 +1040,7 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
     window.__PLAYZIP_RESULT_URL__ = buildResultUrl(scores, sensitivity, state.nickname);
     const type = calcType(scores);
     const result = RESULTS[type];
-    const charUrl = IMG.characters[type];
+    const charUrl = window.PlayzipCharacters.resolve(type, IMG.characters[type]);
     const compat = calcCompatDetail(scores, type);
     const mixedAxes = calcAxisPercents(scores).filter(a => a.leftPct >= 40 && a.leftPct <= 60);
     const mixedNote = mixedAxes.length ? mixedAxes.map(a=>a.leftLabel+"·"+a.rightLabel).join(", ")+"은 양쪽 성향이 가까워요. 아래 동물은 대표 후보이며 상황에 따라 다른 후보도 어울릴 수 있어요." : "이번 답변에서 상대적으로 가까운 동물이에요. 상황과 시기에 따라 달라질 수 있어요.";
@@ -1060,8 +1081,9 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
 
     root.innerHTML = `
       <div class="nabti-card" style="background: linear-gradient(160deg, ${result.color[1]}22, #ffffff);">
+        ${themeBadge()}
         <div class="nabti-result-frame">
-          <img class="character" src="${charUrl}" alt="${type}" />
+          <img class="character" data-character="${type}" src="${charUrl}" alt="${type}" />
           
           
         </div>
@@ -1172,6 +1194,7 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
       toggleBtn.textContent = isCollapsed ? "자세히 보기 ▾" : "간단히 보기 ▴";
     };
 
+    refreshCharacterArtwork();
     document.getElementById("nabti-retry-btn").onclick = () => {
       if(isShared && !window.AndroidPlayzip){location.href=window.playzipAppLink(shareLinkUrl);return;}
       resetState();
@@ -1203,6 +1226,7 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
   } else {
     renderStart();
   }
+  refreshCharacterArtwork();
 })();
 </script>
 
