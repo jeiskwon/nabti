@@ -893,6 +893,7 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
   }
 
   function renderStart() {
+    window.playzipShareCurrentResult = null;
     root.innerHTML = `
       <div class="nabti-card nabti-start-card">
         <div class="nabti-start-kicker">PLAYZIP PERSONALITY</div>
@@ -940,6 +941,7 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
   }
 
   function renderQuestion() {
+    window.playzipShareCurrentResult = null;
     const q = QUESTIONS[state.step];
     const optionsHtml = RESPONSE_LABELS.map((opt, idx) => `
       <button class="nabti-option" aria-pressed="${state.answers[state.step] === idx}" data-idx="${idx}">${opt}</button>
@@ -1212,8 +1214,7 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
     };
 
     const shareBtn = document.getElementById("nabti-share-btn");
-    if (shareBtn) {
-      shareBtn.onclick = () => {
+    const sendCurrentResult = () => {
         const resultUrl = buildResultUrl(scores, sensitivity, state.nickname);
         shareToKakao({
           title: `${state.nickname}님은 ${result.animal}상이시네요! (${type})`,
@@ -1221,8 +1222,9 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
           imageUrl: characterUrl(type),
           link: resultUrl
         });
-      };
-    }
+    };
+    window.playzipShareCurrentResult = sendCurrentResult;
+    if (shareBtn) shareBtn.onclick = sendCurrentResult;
   }
 
   const sharedResult = parseSharedResult();
