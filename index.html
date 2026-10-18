@@ -15,6 +15,14 @@
 .nabti-result-frame .character{object-fit:contain!important;width:100%;height:100%;max-height:340px}.nabti-bubble img{object-fit:contain!important}.nabti-bubble{background:transparent!important;box-shadow:none!important}
 
 .nabti-season-badge{display:table;margin:0 auto 12px;padding:6px 12px;border-radius:999px;background:#f3e6d6;color:#755031;font-size:11px;font-weight:800}.nabti-season-badge[hidden]{display:none}[data-theme="halloween"] .nabti-start-card{background:linear-gradient(150deg,#fff3e7,#f4ecfb)}
+
+/* Detailed storybook illustrations with space for five response choices. */
+.nabti-qicon{width:112px;height:102px;object-fit:contain;margin:2px auto 14px}
+.nabti-loading img{width:190px;height:190px;object-fit:contain}
+.nabti-paw{width:17px;height:17px;object-fit:contain;opacity:.28;filter:grayscale(1)}
+.nabti-paw.filled{opacity:1;filter:none}.nabti-paw.current{opacity:1;filter:none;transform:scale(1.13);outline:1px solid #b79ad0;outline-offset:2px;border-radius:50%}
+.nabti-detail-title .nabti-detail-art{width:38px;height:38px;object-fit:contain;vertical-align:middle;flex-shrink:0}
+@media(max-width:370px){.nabti-qicon{width:100px;height:94px}.nabti-progress-wrap{gap:2px}.nabti-paw{width:16px;height:16px}}
 </style>
 <script src="https://jeiskwon.github.io/playzip/saju/shared-result.js"></script>
 </head>
@@ -498,18 +506,18 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
     bgPattern: "https://i.ibb.co/d09jdwyy/bg-pattern.png",
     coverImage: "https://cdn.jsdelivr.net/gh/jeiskwon/tech-asset/image/nabti/%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EC%8B%9C%EC%9E%91%20%ED%99%94%EB%A9%B4%20%EB%8C%80%ED%91%9C%20%EC%9D%B4%EB%AF%B8%EC%A7%80.webp",
     playButton: "https://jeiskwon.github.io/playzip/icons/play.svg",
-    pawPrint: "https://jeiskwon.github.io/playzip/icons/paw.svg",
-    loadingChick: "https://jeiskwon.github.io/playzip/icons/today.svg",
+    pawPrint: "https://jeiskwon.github.io/playzip/illustrations/v1/paw.webp",
+    loadingChick: "https://jeiskwon.github.io/playzip/illustrations/v1/loading.webp",
     refreshIcon: "https://jeiskwon.github.io/playzip/icons/refresh.svg",
     shareIcon: "https://jeiskwon.github.io/playzip/icons/share.svg",
     badgeRibbon: "https://i.ibb.co/pBR8BDV5/badge-ribbon.png",
     gaugeBar: "https://i.ibb.co/3YzHY1Bx/gauge-bar.png",
-    hedgehogGauge: "https://jeiskwon.github.io/playzip/icons/radar.svg",
+    hedgehogGauge: "https://jeiskwon.github.io/playzip/illustrations/v1/radar.webp",
     snsFrame: "https://i.ibb.co/dsBkCBLd/sns-frame.png",
-    iconEmotion: "https://jeiskwon.github.io/playzip/icons/emotion.svg",
-    iconRelationship: "https://jeiskwon.github.io/playzip/icons/relationship.svg",
-    iconAlonetime: "https://jeiskwon.github.io/playzip/icons/alone.svg",
-    iconPlanning: "https://jeiskwon.github.io/playzip/icons/planning.svg",
+    iconEmotion: "https://jeiskwon.github.io/playzip/illustrations/v1/emotion.webp",
+    iconRelationship: "https://jeiskwon.github.io/playzip/illustrations/v1/relationship.webp",
+    iconAlonetime: "https://jeiskwon.github.io/playzip/illustrations/v1/alone.webp",
+    iconPlanning: "https://jeiskwon.github.io/playzip/illustrations/v1/planning.webp",
     characters: {
       INTJ: "https://jeiskwon.github.io/playzip/characters/nabti-a/INTJ.webp", INTP: "https://jeiskwon.github.io/playzip/characters/nabti-a/INTP.webp",
       ENTJ: "https://jeiskwon.github.io/playzip/characters/nabti-a/ENTJ.webp", ENTP: "https://jeiskwon.github.io/playzip/characters/nabti-a/ENTP.webp",
@@ -935,9 +943,9 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
     const total = QUESTIONS.length;
     let paws = "";
     for (let i = 0; i < total; i++) {
-      paws += `<img class="nabti-paw ${i <= state.step ? 'filled' : ''}" src="${IMG.pawPrint}" alt="" />`;
+      paws += `<img class="nabti-paw ${i < state.step ? 'filled' : i === state.step ? 'current' : ''}" src="${IMG.pawPrint}" alt="" />`;
     }
-    return `<div class="nabti-progress-wrap">${paws}<span class="nabti-qcount">${state.step + 1}/${total}</span></div>`;
+    return `<div class="nabti-progress-wrap" role="progressbar" aria-label="질문 진행" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${state.step + 1}">${paws}<span class="nabti-qcount">${state.step + 1}/${total}</span></div>`;
   }
 
   function renderQuestion() {
@@ -982,7 +990,7 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
   function renderLoading() {
     root.innerHTML = `
       <div class="nabti-card nabti-loading">
-        <img src="${IMG.loadingChick}" alt="로딩중" />
+        <img src="${IMG.loadingChick}" alt="결과를 찾는 부엉이 안내자" />
         <p>결과를 계산하고 있어요...</p>
       </div>
     `;
@@ -1129,32 +1137,32 @@ body{background:#fffaf4;color:#332d43} details>summary{min-height:44px;display:f
           </div>
 
           <div class="nabti-detail-section">
-            <div class="nabti-detail-title">🐾 ${state.nickname}님의 특징</div>
+            <div class="nabti-detail-title"><img class="nabti-detail-art" src="${IMG.pawPrint}" alt="" /> ${state.nickname}님의 특징</div>
             ${traitListHtml}
           </div>
 
           <div class="nabti-detail-section">
-            <div class="nabti-detail-title"><img src="${IMG.iconPlanning}" alt="" style="width:22px;height:22px;" /> ${state.nickname}님의 학습과 일 스타일</div>
+            <div class="nabti-detail-title"><img src="${IMG.iconPlanning}" alt="" class="nabti-detail-art" /> ${state.nickname}님의 학습과 일 스타일</div>
             <div class="nabti-detail-text">${result.work}</div>
           </div>
 
           <div class="nabti-detail-section">
-            <div class="nabti-detail-title"><img src="${IMG.iconRelationship}" alt="" style="width:22px;height:22px;" /> ${state.nickname}님의 관계 스타일</div>
+            <div class="nabti-detail-title"><img src="${IMG.iconRelationship}" alt="" class="nabti-detail-art" /> ${state.nickname}님의 관계 스타일</div>
             <div class="nabti-detail-text">${result.relationship}</div>
           </div>
 
           <div class="nabti-detail-section">
-            <div class="nabti-detail-title">💪 ${state.nickname}님의 강점 활용법</div>
+            <div class="nabti-detail-title"><img class="nabti-detail-art" src="${IMG.iconPlanning}" alt="" /> ${state.nickname}님의 강점 활용법</div>
             <div class="nabti-detail-text">${result.strength}</div>
           </div>
 
           <div class="nabti-detail-section">
-            <div class="nabti-detail-title"><img src="${IMG.iconEmotion}" alt="" style="width:22px;height:22px;" /> 스트레스를 받을 때</div>
+            <div class="nabti-detail-title"><img src="${IMG.iconEmotion}" alt="" class="nabti-detail-art" /> 스트레스를 받을 때</div>
             <div class="nabti-detail-text">${result.stress}</div>
           </div>
 
           <div class="nabti-detail-section">
-            <div class="nabti-detail-title">⚠️ 주의할 점</div>
+            <div class="nabti-detail-title"><img class="nabti-detail-art" src="${IMG.hedgehogGauge}" alt="" /> 주의할 점</div>
             <div class="nabti-detail-text">${result.caution}</div>
           </div>
 
